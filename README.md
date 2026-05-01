@@ -1,35 +1,46 @@
 # Team Task Manager
 
-A full-stack project management web app built with React, Vite, Express, and PostgreSQL.
+A full-stack project management web application with authentication, role-based access, and collaborative task tracking.
+
+## Tech Stack
+
+- Frontend: React, Vite, React Router
+- Backend: Node.js, Express
+- Database: PostgreSQL
+- Authentication: JWT
+- Styling: CSS with responsive layout
+- Deployment-ready for platforms like Railway
 
 ## Features
 
-- JWT authentication with signup/login
-- Role-based access control (admin/member)
-- Admins can create projects and assign team members
-- Admins can create tasks and assign them to project members
-- Members can view their tasks and update task status
-- Dashboard with task status breakdown and overdue tasks
+- Secure signup and login with JWT authentication
+- Role-based access control for `admin` and `member`
+- Admin dashboard for creating projects and tasks
+- Project member assignment and removal
+- Task creation with status management and due dates
+- Responsive dashboard with project and task summaries
+- Auto-refreshing project list after creation
 
 ## Folder Structure
 
 - `backend/`
-  - `controllers/` - request handling logic
-  - `middleware/` - authentication and authorization
-  - `models/` - PostgreSQL connection and schema initialization
+  - `controllers/` - request handling and business logic
+  - `middleware/` - auth and role checks
+  - `models/` - PostgreSQL connection and schema setup
   - `routes/` - API route definitions
   - `server.js` - Express server entrypoint
 - `frontend/`
-  - `src/` - React app source
-  - `src/pages/` - login, signup, dashboard
-  - `src/services/` - API helper
-  - `src/utils/` - auth helpers
+  - `src/` - React application source
+  - `src/pages/` - Login, Signup, Dashboard pages
+  - `src/services/` - API request helpers
+  - `src/utils/` - auth state helpers
 
 ## Setup
 
-### Backend
+### 1. Backend Setup
 
-1. Copy `.env.example` to `backend/.env` and configure:
+1. Copy `backend/.env.example` to `backend/.env`.
+2. Update backend environment variables:
 
    ```env
    DATABASE_URL=postgres://username:password@localhost:5432/team_task_manager
@@ -37,105 +48,100 @@ A full-stack project management web app built with React, Vite, Express, and Pos
    PORT=4000
    ```
 
-2. Install dependencies:
+3. Install backend dependencies:
 
    ```bash
    cd backend
    npm install
    ```
 
-3. Start the backend:
+4. Start the backend server:
 
    ```bash
    npm run dev
    ```
 
-### Frontend
+### 2. Frontend Setup
 
-1. Copy `frontend/.env.example` to `frontend/.env` and configure:
+1. Copy `frontend/.env.example` to `frontend/.env`.
+2. Update frontend environment variables:
 
    ```env
    VITE_API_URL=http://localhost:4000
    ```
 
-2. Install dependencies:
+3. Install frontend dependencies:
 
    ```bash
    cd frontend
    npm install
    ```
 
-3. Start the frontend:
+4. Start the frontend app:
 
    ```bash
    npm run dev
    ```
 
-## API Documentation
+## API Endpoints
 
-### Auth
+### Authentication
 
 - `POST /auth/signup`
   - Body: `{ name, email, password, role }`
-  - Returns: user and JWT token
+  - Response: `{ user, token }`
 
 - `POST /auth/login`
   - Body: `{ email, password }`
-  - Returns: user and JWT token
+  - Response: `{ user, token }`
 
 ### Projects
 
-- `POST /projects` (admin only)
-  - Body: `{ name, description }`
-
 - `GET /projects`
-  - Returns projects for the logged-in user
+  - Returns projects available to the authenticated user.
 
-- `POST /projects/:projectId/members` (admin only)
+- `POST /projects`
+  - Admin only.
+  - Body: `{ name, description }`
+  - Creates a new project.
+
+- `POST /projects/:projectId/members`
+  - Admin only.
   - Body: `{ userId }`
+  - Adds a member to a project.
 
-- `DELETE /projects/:projectId/members/:userId` (admin only)
+- `DELETE /projects/:projectId/members/:userId`
+  - Admin only.
+  - Removes a member from a project.
 
 ### Tasks
 
-- `POST /tasks` (admin only)
-  - Body: `{ title, description, projectId, assignedTo, status, dueDate }`
-
 - `GET /tasks`
-  - Returns tasks assigned to the logged-in user
+  - Returns tasks assigned to the authenticated user.
+
+- `POST /tasks`
+  - Admin only.
+  - Body: `{ title, description, projectId, assignedTo, status, dueDate }`
+  - Creates a new task.
 
 - `PATCH /tasks/:id`
-  - Body: `{ status }`
+  - Updates task fields such as `{ status }`.
 
 ### Users
 
-- `GET /users` (admin only)
-  - Returns a list of users
+- `GET /users`
+  - Admin only.
+  - Returns all users.
 
-## Deployment
+## Deployment Notes
 
-This app is ready for Railway deployment.
+- Backend: set `DATABASE_URL`, `JWT_SECRET`, and `PORT` in your deployment environment.
+- Frontend: set `VITE_API_URL` to the deployed backend URL.
+- Backend start command: `npm start`
+- Frontend build command: `npm run build`
 
-### Backend Deployment
+## Important Notes
 
-- Add `DATABASE_URL`, `JWT_SECRET`, and `PORT` in Railway environment variables.
-- Set the service's start command to:
-
-  ```bash
-  npm start
-  ```
-
-### Frontend Deployment
-
-- Add `VITE_API_URL` to Railway environment variables pointing to the backend URL.
-- Set the frontend start command to:
-
-  ```bash
-  npm run build
-  ```
-
-## Notes
-
-- The backend auto-creates required tables on startup.
-- Use `admin` or `member` roles at signup.
-- Keep environment secrets out of source control.
+- Do not commit `.env` files or secrets.
+- The backend initializes database tables automatically on startup.
+- Use role values `admin` or `member` when signing up.
